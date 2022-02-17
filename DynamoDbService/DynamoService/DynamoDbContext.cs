@@ -1,5 +1,6 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.DocumentModel;
 using DynamoDbService.Interfaces;
 
 namespace DynamoDbService.DynamoServices
@@ -10,14 +11,19 @@ namespace DynamoDbService.DynamoServices
         {
         }
 
-        public async Task<IEnumerable<T>> GetAsync(List<ScanCondition> conditions)
+        public async Task<IEnumerable<T>> ScanAsync(List<ScanCondition> conditions)
         {
             return await base.ScanAsync<T>(conditions).GetRemainingAsync();
         }
 
-        public async Task<T> GetByIdAsync(string id)
+        public async Task<IEnumerable<T>> QueryAsync(string hashKey, QueryOperator op, IEnumerable<object> values)
         {
-            return await base.LoadAsync<T>(id);
+            return await base.QueryAsync<T>(hashKey, op, values).GetRemainingAsync();
+        }
+
+        public async Task<T> GetByIdAsync(string hashKey)
+        {
+            return await base.LoadAsync<T>(hashKey);
         }
 
         public async Task DeleteByIdAsync(T item)

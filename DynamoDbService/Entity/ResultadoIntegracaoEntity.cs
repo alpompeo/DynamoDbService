@@ -8,7 +8,7 @@ namespace DynamoDbService.Entity
         [DynamoDBHashKey("COD_IDEF_ITGR")]//, typeof(GuidTypeConverter))]
         public string CodigoIntegracao { get; set; }
 
-        [DynamoDBProperty("NOM_SIS_ITGR")]
+        [DynamoDBRangeKey("NOM_SIS_ITGR")]
         public string NomeSistemaIntegracao { get; set; }
 
         [DynamoDBProperty("TXT_ITGR_RESU")]
