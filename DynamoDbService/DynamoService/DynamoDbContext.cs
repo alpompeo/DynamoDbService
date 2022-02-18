@@ -21,9 +21,9 @@ namespace DynamoDbService.DynamoServices
             return await base.QueryAsync<T>(hashKey, op, values).GetRemainingAsync();
         }
 
-        public async Task<T> GetByIdAsync(string hashKey)
+        public async Task<T> GetByIdAsync(string hashKey, string rangeKey = "")
         {
-            return await base.LoadAsync<T>(hashKey);
+            return await base.LoadAsync<T>(hashKey, rangeKey);
         }
 
         public async Task DeleteByIdAsync(T item)

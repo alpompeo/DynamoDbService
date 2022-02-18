@@ -10,8 +10,7 @@ namespace DynamoDbService.DynamoServices
             var primitive = entry as Primitive;
 
             if (primitive == null || !(primitive.Value is String) ||
-                string.IsNullOrEmpty((string)primitive.Value) ||
-                !Guid.TryParse((string)primitive.Value, out Guid guidValue))
+                string.IsNullOrEmpty((string)primitive.Value) || !Guid.TryParse((string)primitive.Value, out Guid guidValue))
                 throw new ArgumentOutOfRangeException();
 
             return guidValue;
@@ -19,11 +18,12 @@ namespace DynamoDbService.DynamoServices
 
         public DynamoDBEntry ToEntry(object value)
         {
-            if (value == null || !(value is Guid)) throw new ArgumentOutOfRangeException();
+            if (value == null || !Guid.TryParse(value.ToString(), out Guid guid)) 
+                throw new ArgumentOutOfRangeException();
 
             DynamoDBEntry entry = new Primitive
             {
-                Value = ((Guid)value).ToString()
+                Value = guid.ToString()
             };
 
             return entry;

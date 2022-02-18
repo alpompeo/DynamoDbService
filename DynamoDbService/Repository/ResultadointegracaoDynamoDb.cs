@@ -1,4 +1,5 @@
-﻿using Amazon.DynamoDBv2.DocumentModel;
+﻿using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.DocumentModel;
 using DynamoDbService.Entity;
 using DynamoDbService.Interfaces;
 
@@ -13,7 +14,7 @@ namespace DynamoDbService.Repositories
             _context = context;
         }
 
-        public async Task<ResultadoIntegracaoEntity> GetIntegracaoCodigoSistema(string codigoIntegracao, string nomeSistemaIntegracao)
+        public async Task<ResultadoIntegracaoEntity> GetIntegracaoCodigoSistema(Guid codigoIntegracao, string nomeSistemaIntegracao)
         {
             //TODO: Exemplo utilizando Scan, mas não é performatico.
             //Utilzar somente quando não há um indice deficnido na tabela.
@@ -22,9 +23,12 @@ namespace DynamoDbService.Repositories
             //conditions.Add(new ScanCondition("NomeSistemaIntegracao", ScanOperator.Equal, nomeSistemaIntegracao));
             //var result = await _context.ScanAsync(conditions);
 
-            var result = await _context.QueryAsync(codigoIntegracao, QueryOperator.Equal, new object[] { nomeSistemaIntegracao });
+            return (await _context.QueryAsync(codigoIntegracao.ToString(), QueryOperator.Equal, new object[] { nomeSistemaIntegracao })).SingleOrDefault();
+        }
 
-            return result.SingleOrDefault();
+        public async Task<IEnumerable<ResultadoIntegracaoEntity>> Listar()
+        {
+            return (await _context.ScanAsync(new List<ScanCondition>())).ToList();
         }
 
         public async Task SaveIntegracaoCodigoSistema(ResultadoIntegracaoEntity resultadoIntegracao)
@@ -37,9 +41,11 @@ namespace DynamoDbService.Repositories
             await _context.DeleteByIdAsync(resultadoIntegracao);
         }
 
-        public async Task<int> VerificaExisteIntegracao(string codigoIntegracao)
+        public async Task<int?> GetStatusIntegracao(string codigoIntegracao,  string nomeSistemaIntegracao)
         {
-            return await _context.GetByIdAsync(codigoIntegracao) == null ? 0 : 1;
+            var result = (await _context.QueryAsync(codigoIntegracao.ToString(), QueryOperator.Equal, new object[] { nomeSistemaIntegracao })).FirstOrDefault();
+
+            return (int?)result?.CodigoStatusIntegracao;
         }
     }
 }

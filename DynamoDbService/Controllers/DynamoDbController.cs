@@ -19,8 +19,23 @@ namespace DynamoDbService.Controllers
         }
 
         [HttpGet]
+        [Route("integracao")]
+        public async Task<IEnumerable<ResultadoIntegracaoEntity>> Get()
+        {
+            try
+            {
+                return await _repository.Listar();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+        [HttpGet]
         [Route("integracao/{codigoIntegracao}/{nomeSistemaIntegracao}")]
-        public async Task<ResultadoIntegracaoEntity> Get(string codigoIntegracao, string nomeSistemaIntegracao)
+        public async Task<ResultadoIntegracaoEntity> Get(Guid codigoIntegracao, string nomeSistemaIntegracao)
         {
             try
             {
@@ -34,12 +49,12 @@ namespace DynamoDbService.Controllers
         }
 
         [HttpGet]
-        [Route("integracao/Exists/{codigoIntegracao}")]
-        public async Task<int> Exists(string codigoIntegracao)
+        [Route("integracao/Status/{codigoIntegracao}/{nomeSistemaIntegracao}")]
+        public async Task<int?> GetStatus(string codigoIntegracao, string nomeSistemaIntegracao)
         {
             try
             {
-                return await _repository.VerificaExisteIntegracao(codigoIntegracao);
+                return await _repository.GetStatusIntegracao(codigoIntegracao, nomeSistemaIntegracao);
             }
             catch (Exception ex)
             {
@@ -56,9 +71,10 @@ namespace DynamoDbService.Controllers
             {
                 var item = new ResultadoIntegracaoEntity()
                 {
-                    CodigoIntegracao = Guid.NewGuid().ToString(),
+                    CodigoIntegracao = Guid.NewGuid(),
                     NomeSistemaIntegracao = "SISTEMA_" + new Random().Next(),
-                    TestoIntegracaoResultado = "TEXTO_" + new Random().Next()
+                    TextoIntegracaoResultado = "TEXTO_" + new Random().Next(),
+                    CodigoStatusIntegracao = EnumResultadoIntegracao.INTEGRACAO_INICIADA
                 };
 
                 await _repository.SaveIntegracaoCodigoSistema(item);
@@ -74,7 +90,7 @@ namespace DynamoDbService.Controllers
 
         [HttpPut]
         [Route("integracao/update/{codigoIntegracao}/{nomeSistemaIntegracao}")]
-        public async Task<ResultadoIntegracaoEntity> Update(string codigoIntegracao, string nomeSistemaIntegracao)
+        public async Task<ResultadoIntegracaoEntity> Update(Guid codigoIntegracao, string nomeSistemaIntegracao)
         {
             try
             {
@@ -82,7 +98,7 @@ namespace DynamoDbService.Controllers
                 {
                     CodigoIntegracao = codigoIntegracao,
                     NomeSistemaIntegracao = nomeSistemaIntegracao,
-                    TestoIntegracaoResultado = "TEXTO_" + new Random().Next()
+                    TextoIntegracaoResultado = "TEXTO_" + new Random().Next()
                 };
 
                 await _repository.SaveIntegracaoCodigoSistema(item);
@@ -98,7 +114,7 @@ namespace DynamoDbService.Controllers
 
         [HttpDelete]
         [Route("integracao/delete/{codigoIntegracao}/{nomeSistemaIntegracao}")]
-        public async Task Delete(string codigoIntegracao, string nomeSistemaIntegracao)
+        public async Task Delete(Guid codigoIntegracao, string nomeSistemaIntegracao)
         {
             try
             {
