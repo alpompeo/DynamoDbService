@@ -34,6 +34,21 @@ namespace DynamoDbService.Controllers
         }
 
         [HttpGet]
+        [Route("integracao/Status/{codigoIntegracao}")]
+        public async Task<int?> Get(string codigoIntegracao)
+        {
+            try
+            {
+                return await _repository.GetStatusIntegracao(codigoIntegracao);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+        [HttpGet]
         [Route("integracao/{codigoIntegracao}/{nomeSistemaIntegracao}")]
         public async Task<ResultadoIntegracaoEntity> Get(Guid codigoIntegracao, string nomeSistemaIntegracao)
         {
@@ -48,24 +63,9 @@ namespace DynamoDbService.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("integracao/Status/{codigoIntegracao}/{nomeSistemaIntegracao}")]
-        public async Task<int?> GetStatus(string codigoIntegracao, string nomeSistemaIntegracao)
-        {
-            try
-            {
-                return await _repository.GetStatusIntegracao(codigoIntegracao, nomeSistemaIntegracao);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw;
-            }
-        }
-
         [HttpPost]
         [Route("integracao/add")]
-        public async Task<ResultadoIntegracaoEntity> Add()
+        public async Task<ResultadoIntegracaoEntity> Insert()
         {
             try
             {
@@ -121,7 +121,7 @@ namespace DynamoDbService.Controllers
                 var obj = await _repository.GetIntegracaoCodigoSistema(codigoIntegracao, nomeSistemaIntegracao);
 
                 if (obj == null)
-                    throw new Exception("Ñão foi encontrado o codigo de integração.");
+                    throw new Exception("Não foi encontrado a integração.");
 
                 await _repository.DeleteIntegracao(obj);
             }

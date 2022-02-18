@@ -21,6 +21,11 @@ namespace DynamoDbService.DynamoServices
             return await base.QueryAsync<T>(hashKey, op, values).GetRemainingAsync();
         }
 
+        public async Task<IEnumerable<T>> QueryAsync(string hashKey)
+        {
+            return await base.QueryAsync<T>(hashKey).GetRemainingAsync();
+        }
+
         public async Task<T> GetByIdAsync(string hashKey, string rangeKey = "")
         {
             return await base.LoadAsync<T>(hashKey, rangeKey);

@@ -41,9 +41,9 @@ namespace DynamoDbService.Repositories
             await _context.DeleteByIdAsync(resultadoIntegracao);
         }
 
-        public async Task<int?> GetStatusIntegracao(string codigoIntegracao,  string nomeSistemaIntegracao)
+        public async Task<int?> GetStatusIntegracao(string codigoIntegracao)
         {
-            var result = (await _context.QueryAsync(codigoIntegracao.ToString(), QueryOperator.Equal, new object[] { nomeSistemaIntegracao })).FirstOrDefault();
+            var result = (await _context.QueryAsync(codigoIntegracao.ToString())).FirstOrDefault();
 
             return (int?)result?.CodigoStatusIntegracao;
         }

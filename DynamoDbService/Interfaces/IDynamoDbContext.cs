@@ -7,6 +7,7 @@ namespace DynamoDbService.Interfaces
     {
         Task<IEnumerable<T>> ScanAsync(List<ScanCondition> conditions);
         Task<IEnumerable<T>> QueryAsync(string hashKey, QueryOperator op, IEnumerable<object> values);
+        Task<IEnumerable<T>> QueryAsync(string hashKey);
         Task<T> GetByIdAsync(string hashKey, string rangeKey = "");
         Task Save(T item);
         Task DeleteByIdAsync(T item);
